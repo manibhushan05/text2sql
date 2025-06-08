@@ -1,0 +1,82 @@
+{
+  "charter_name": "Food Orders",
+  "tables": {
+    "orders": {
+      "description": "Contains information about customer orders placed on the platform.",
+      "columns": {
+        "order_id": {
+          "type": "INTEGER",
+          "description": "Unique ID for each order"
+        },
+        "customer_id": {
+          "type": "INTEGER",
+          "description": "ID of the customer who placed the order"
+        },
+        "order_date": {
+          "type": "DATETIME",
+          "description": "Timestamp when the order was placed"
+        },
+        "total_amount": {
+          "type": "DECIMAL",
+          "description": "Total value of the order in INR"
+        }
+      }
+    },
+    "customers": {
+      "description": "Contains customer profiles and contact details.",
+      "columns": {
+        "customer_id": {
+          "type": "INTEGER",
+          "description": "Unique identifier for each customer"
+        },
+        "name": {
+          "type": "VARCHAR",
+          "description": "Full name of the customer"
+        },
+        "email": {
+          "type": "VARCHAR",
+          "description": "Email address of the customer"
+        },
+        "signup_date": {
+          "type": "DATETIME",
+          "description": "Date when the customer registered on the platform"
+        }
+      }
+    }
+  },
+  "relationships": [
+    {
+      "from_table": "orders",
+      "from_column": "customer_id",
+      "to_table": "customers",
+      "to_column": "customer_id",
+      "description": "Links each order to the customer who placed it"
+    }
+  ],
+  "metrics": [
+    {
+      "name": "daily_orders",
+      "description": "Number of orders placed per day",
+      "sql": "SELECT order_date, COUNT(*) AS num_orders FROM orders GROUP BY order_date"
+    },
+    {
+      "name": "customer_lifetime_value",
+      "description": "Total spending by a customer across all their orders",
+      "sql": "SELECT customer_id, SUM(total_amount) AS lifetime_value FROM orders GROUP BY customer_id"
+    }
+  ],
+  "sample_queries": [
+    {
+      "description": "Total number of orders each day",
+      "query": "SELECT order_date, COUNT(*) FROM orders GROUP BY order_date"
+    },
+    {
+      "description": "Top 5 customers by spending",
+      "query": "SELECT customer_id, SUM(total_amount) AS total_spent FROM orders GROUP BY customer_id ORDER BY total_spent DESC LIMIT 5"
+    },
+    {
+      "description": "List all orders with customer names",
+      "query": "SELECT o.order_id, o.order_date, c.name FROM orders o JOIN customers c ON o.customer_id = c.customer_id"
+    }
+  ]
+}
